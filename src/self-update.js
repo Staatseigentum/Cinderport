@@ -1,15 +1,16 @@
 class SelfUpdate {
-  constructor({ packaged, preview, version, notify, updater }) {
+  constructor({ packaged, preview, version, notify, updater, channel = 'stable' }) {
     this.notify = notify;
-    this.state = { phase: packaged && !preview ? 'idle' : 'unavailable', version, latestVersion: null, progress: null };
+    this.state = { phase: packaged && !preview ? 'idle' : 'unavailable', version, latestVersion: null, progress: null, channel };
     if (this.state.phase === 'unavailable') return;
     updater ||= require('electron-updater').autoUpdater;
     this.updater = updater;
+    this.configureChannel(channel);
     updater.autoDownload = true;
     updater.autoInstallOnAppQuit = true;
     updater.on('checking-for-update', () => this.set({ phase: 'checking', progress: null }));
     updater.on('update-available', info => this.set({ phase: 'downloading', latestVersion: info.version, progress: 0 }));
-    updater.on('update-not-available', () => this.set({ phase: 'ready', progress: null }));
+    updater.on('update-not-available', info => this.set({ phase: 'ready', latestVersion: info?.version || this.state.version, progress: null }));
     updater.on('download-progress', info => this.set({ phase: 'downloading', progress: Math.round(info.percent) }));
     updater.on('update-downloaded', info => this.set({ phase: 'downloaded', latestVersion: info.version, progress: 100 }));
     updater.on('error', error => this.set({ phase: 'error', progress: null, error: String(error.message || error).slice(0, 300) }));
@@ -21,6 +22,21 @@ class SelfUpdate {
   }
 
   snapshot() { return { ...this.state }; }
+
+  configureChannel(channel) {
+    if (!['stable', 'beta'].includes(channel)) throw new Error('Invalid update channel');
+    if (!this.updater) { this.state.channel = channel; return; }
+    this.updater.channel = channel === 'beta' ? 'beta' : 'latest';
+    this.updater.allowPrerelease = channel === 'beta';
+    this.updater.allowDowngrade = false;
+    this.state.channel = channel;
+  }
+
+  setChannel(channel) {
+    this.configureChannel(channel);
+    this.set({ phase: this.state.phase === 'unavailable' ? 'unavailable' : 'idle', latestVersion: null, progress: null, error: null });
+    return this.snapshot();
+  }
 
   async check() {
     if (this.state.phase === 'unavailable' || this.state.phase === 'downloading' || this.state.phase === 'downloaded') return this.snapshot();

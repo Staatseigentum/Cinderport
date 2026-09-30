@@ -13,7 +13,8 @@ module.exports = [
     executable: 'Embercrown.exe',
     registryName: 'Embercrown',
     installFolders: ['Embercrown'],
-    theme: 'ember'
+    theme: 'ember',
+    screenshots: ['embercrown-shot-1.jpg', 'embercrown-shot-2.jpg']
   },
   {
     id: 'kollaps',
@@ -27,7 +28,8 @@ module.exports = [
     executable: 'Kollaps.exe',
     registryName: 'Kollaps',
     installFolders: ['Kollaps'],
-    theme: 'space'
+    theme: 'space',
+    screenshots: ['kollaps-shot-4.png', 'kollaps-shot-5.png']
   },
   {
     id: 'streamplan',
@@ -41,6 +43,7 @@ module.exports = [
     executable: 'Streamplan Maker.exe',
     registryName: 'Streamplan Maker',
     installFolders: ['streamplan-maker', 'Streamplan Maker'],
-    theme: 'maker'
+    theme: 'maker',
+    screenshots: ['streamplan-preview.png']
   }
 ];

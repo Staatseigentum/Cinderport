@@ -30,6 +30,8 @@
         <div class="sidebar-label" data-i18n="nav.label">NAVIGATION</div>
         <nav class="navigation" aria-label="Hauptnavigation" data-i18n-aria="nav.aria">
           <button class="nav-item active" data-view="library"><span class="nav-glyph">▦</span><span data-i18n="nav.library">Bibliothek</span><span class="nav-arrow">›</span></button>
+          <button class="nav-item" data-view="downloads"><span class="nav-glyph">⇣</span><span data-i18n="nav.downloads">Downloads</span><span class="nav-dot" id="downloads-dot"></span></button>
+          <button class="nav-item" data-view="news"><span class="nav-glyph">✦</span><span data-i18n="nav.news">News</span></button>
           <button class="nav-item" data-view="activity"><span class="nav-glyph">↓</span><span data-i18n="nav.activity">Aktivität</span><span class="nav-dot" id="activity-dot"></span></button>
           <button class="nav-item" data-view="settings"><span class="nav-glyph">⚙</span><span data-i18n="nav.settings">Einstellungen</span></button>
           <button class="nav-item" data-view="about"><span class="nav-glyph">✧</span><span data-i18n="nav.about">Über Cinderport</span></button>
@@ -55,25 +57,65 @@
 
           <div class="hero-panel">
             <div class="hero-grid"></div>
-            <div class="hero-copy"><div class="hero-badge"><span class="badge-star">✦</span> <span data-i18n="hero.badge">DIE SAMMLUNG WÄCHST</span></div><h2><span data-i18n="hero.line1">Neue Welten.</span><br><em data-i18n="hero.line2">Ein Portal.</em></h2><p data-i18n="hero.subtitle">Spiele und Tools an einem Ort. Mehr ist auf dem Weg.</p><div class="hero-bottom"><span class="hero-dash"></span> <span data-i18n="hero.footer">ENTDECKEN. INSTALLIEREN. STARTEN.</span></div></div>
+            <div class="hero-copy"><div class="hero-badge"><span class="badge-star">✦</span> <span data-i18n="hero.badge">DIE SAMMLUNG WÄCHST</span></div><h2><span data-i18n="hero.line1">Neue Welten.</span><br><em data-i18n="hero.line2">Ein Portal.</em></h2><p data-i18n="hero.subtitle">Spiele und Tools an einem Ort. Mehr ist auf dem Weg.</p><div class="hero-bottom"><span class="hero-dash"></span> <span data-i18n="hero.footer">ENTDECKEN. INSTALLIEREN. STARTEN.</span></div><button class="hero-quick" id="quick-launch" hidden></button></div>
             <img class="hero-art" src="../assets/portal.svg" alt="Pixel-Art-Portal vor einer dunklen Landschaft" data-i18n-alt="hero.artAlt">
             <div class="hero-corner">001 / PORTAL</div>
           </div>
 
           <div class="section-heading"><div><div class="kicker muted" data-i18n="library.kicker">// DEINE SAMMLUNG</div><h3><span data-i18n="library.title">Alle Apps</span> <span id="app-count">03</span></h3></div><div class="section-status"><span class="status-pulse"></span><span id="section-status" data-i18n="status.checking">Versionen werden geprüft</span></div></div>
+          <div class="library-tools"><label class="search-wrap"><span aria-hidden="true">⌕</span><input id="app-search" type="search" data-i18n-placeholder="library.search" placeholder="Apps suchen" aria-label="Apps suchen" data-i18n-aria="library.search"></label><div class="filter-group" id="app-filters"><button class="active" data-filter="all" data-i18n="filter.all">Alle</button><button data-filter="installed" data-i18n="filter.installed">Installiert</button><button data-filter="update" data-i18n="filter.update">Updates</button><button data-filter="favorite" data-i18n="filter.favorite">Favoriten</button></div><select id="app-sort" data-i18n-aria="library.sortAria" aria-label="Sortieren"><option value="default" data-i18n="sort.default">Standard</option><option value="recent" data-i18n="sort.recent">Zuletzt gestartet</option><option value="name" data-i18n="sort.name">Name</option></select></div>
           <div class="cards" id="app-cards"></div>
+          <div class="empty-state" id="library-empty" hidden><span>✦</span><strong data-i18n="library.emptyTitle">Keine Apps gefunden</strong><p data-i18n="library.emptyText">Passe Suche oder Filter an.</p></div>
+          <div class="section-heading upcoming-heading"><div><div class="kicker muted" data-i18n="upcoming.kicker">// ALS NÄCHSTES</div><h3 data-i18n="upcoming.title">Demnächst im Portal</h3></div></div>
+          <div class="upcoming-grid" id="upcoming-grid"></div>
           <div class="bottom-note"><span class="note-icon">✦</span><span data-i18n="home.autoNote">Installierte Apps werden beim Öffnen automatisch auf neue Versionen geprüft und aktualisiert.</span><span class="note-right">CINDERPORT // 2026</span></div>
+        </section>
+
+        <section class="view secondary-view" id="view-downloads">
+          <div class="kicker"><span class="kicker-square"></span> <span data-i18n="downloads.kicker">DOWNLOAD-ZENTRALE</span></div><h1><span data-i18n="nav.downloads">Downloads</span><span class="heading-dot">.</span></h1><p data-i18n="downloads.subtitle">Installationen und Updates an einem Ort.</p>
+          <div class="download-summary"><span class="status-pulse"></span><span id="download-summary-text"></span></div>
+          <div class="download-list" id="download-list"></div>
+          <div class="empty-state" id="downloads-empty" hidden><span>⇣</span><strong data-i18n="downloads.emptyTitle">Keine Downloads aktiv</strong><p data-i18n="downloads.emptyText">Neue Installationen erscheinen hier.</p></div>
+          <button class="outline-button cache-button" id="cleanup-cache" data-i18n="downloads.cleanup">Alte Downloads aufräumen</button><span class="cache-result" id="cache-result"></span>
+        </section>
+
+        <section class="view secondary-view" id="view-news">
+          <div class="kicker"><span class="kicker-square"></span> <span data-i18n="news.kicker">AUS DEN WELTEN</span></div><h1><span data-i18n="nav.news">News</span><span class="heading-dot">.</span></h1><p data-i18n="news.subtitle">Die neuesten offiziellen Release-Notizen aus der Sammlung.</p>
+          <div class="news-list" id="news-list"></div>
         </section>
 
         <section class="view secondary-view" id="view-activity">
           <div class="kicker"><span class="kicker-square"></span> <span data-i18n="activity.kicker">STATUSZENTRALE</span></div><h1><span data-i18n="nav.activity">Aktivität</span><span class="heading-dot">.</span></h1><p data-i18n="activity.subtitle">Hier siehst du den Stand deiner Apps und Downloads.</p>
           <div class="activity-panel"><div class="activity-header"><span data-i18n="activity.app">APP</span><span data-i18n="activity.installed">INSTALLIERT</span><span data-i18n="activity.latest">NEUESTE VERSION</span><span data-i18n="activity.status">STATUS</span></div><div id="activity-list"></div></div>
+          <div class="section-heading history-heading"><div><div class="kicker muted" data-i18n="activity.historyKicker">// VERLAUF</div><h3 data-i18n="activity.historyTitle">Letzte Ereignisse</h3></div></div>
+          <div class="history-list" id="history-list"></div>
         </section>
 
         <section class="view secondary-view" id="view-settings">
           <div class="kicker"><span class="kicker-square"></span> <span data-i18n="settings.kicker">DEIN STARTPUNKT</span></div><h1><span data-i18n="nav.settings">Einstellungen</span><span class="heading-dot">.</span></h1><p data-i18n="settings.subtitle">Passe an, wie Cinderport auf deinem PC startet.</p>
           <div class="setting-panel"><div class="setting-icon">↗</div><div class="setting-copy"><h2 data-i18n="settings.autostartTitle">Mit Windows starten</h2><p data-i18n="settings.autostartDescription">Cinderport öffnet sich nach der Anmeldung automatisch und prüft installierte Apps auf Updates.</p><span class="setting-hint" id="autostart-hint"></span></div><button class="toggle" id="autostart-toggle" role="switch" aria-checked="false" data-i18n-aria="settings.toggleAria" aria-label="Autostart umschalten"><span></span></button></div>
           <div class="setting-panel update-panel"><div class="setting-icon">↻</div><div class="setting-copy"><h2 data-i18n="settings.selfUpdateTitle">Cinderport Updates</h2><p data-i18n="settings.selfUpdateDescription">Neue Launcher-Versionen werden automatisch geladen und beim nächsten Beenden installiert.</p><span class="setting-hint" id="self-update-hint"></span></div><button class="refresh-button" id="self-update-action" hidden></button></div>
+          <div class="updater-detail"><div><span data-i18n="updater.installed">INSTALLIERT</span><strong id="updater-current">—</strong></div><div><span data-i18n="updater.latest">NEUESTE VERSION</span><strong id="updater-latest">—</strong></div><div><span data-i18n="updater.status">STATUS</span><strong id="updater-phase">—</strong></div><div class="updater-progress"><span id="updater-progress-fill"></span></div><small id="updater-error"></small></div>
+          <div class="setting-panel"><div class="setting-icon">▣</div><div class="setting-copy"><h2 data-i18n="settings.trayTitle">Im Infobereich weiterlaufen</h2><p data-i18n="settings.trayDescription">Das Schließen des Fensters hält Cinderport im Hintergrund. Über das Tray-Menü kannst du es vollständig beenden.</p></div><button class="toggle" id="tray-toggle" role="switch" aria-checked="false" data-i18n-aria="settings.trayAria" aria-label="Im Infobereich weiterlaufen"><span></span></button></div>
+          <div class="setting-panel"><div class="setting-icon">✦</div><div class="setting-copy"><h2 data-i18n="settings.notificationsTitle">Benachrichtigungen</h2><p data-i18n="settings.notificationsDescription">Melde abgeschlossene Installationen und bereite Updates, wenn Cinderport im Hintergrund ist.</p></div><button class="toggle" id="notifications-toggle" role="switch" aria-checked="true" data-i18n-aria="settings.notificationsAria" aria-label="Benachrichtigungen"><span></span></button></div>
+          <div class="setting-panel"><div class="setting-icon">◌</div><div class="setting-copy"><h2 data-i18n="settings.dndTitle">Beim Streamen nicht stören</h2><p data-i18n="settings.dndDescription">Pausiert automatische Installationen und Benachrichtigungen. Manuelle Aktionen bleiben verfügbar.</p></div><button class="toggle" id="dnd-toggle" role="switch" aria-checked="false" data-i18n-aria="settings.dndAria" aria-label="Beim Streamen nicht stören"><span></span></button></div>
+          <div class="section-heading"><div><div class="kicker muted" data-i18n="settings.lookKicker">// ERSCHEINUNGSBILD</div><h3 data-i18n="settings.lookTitle">Dein Portal</h3></div></div>
+          <div class="theme-picker" id="theme-picker"><button data-theme-choice="cinder"><span class="theme-chip cinder"></span><span data-i18n="theme.cinder">Cinderport</span></button><button data-theme-choice="ember"><span class="theme-chip ember"></span><span data-i18n="theme.ember">Embercrown</span></button><button data-theme-choice="space"><span class="theme-chip space"></span><span data-i18n="theme.space">Kollaps</span></button></div>
+          <div class="setting-panel"><div class="setting-icon">▦</div><div class="setting-copy"><h2 data-i18n="settings.compactTitle">Kompaktansicht</h2><p data-i18n="settings.compactDescription">Zeigt mehr Apps gleichzeitig in der Bibliothek.</p></div><button class="toggle" id="compact-toggle" role="switch" aria-checked="false" data-i18n-aria="settings.compactAria" aria-label="Kompaktansicht"><span></span></button></div>
+          <div class="setting-panel"><div class="setting-icon">◇</div><div class="setting-copy"><h2 data-i18n="settings.motionTitle">Animationen reduzieren</h2><p data-i18n="settings.motionDescription">Deaktiviert Bewegungen und Übergänge im Launcher.</p></div><button class="toggle" id="motion-toggle" role="switch" aria-checked="false" data-i18n-aria="settings.motionAria" aria-label="Animationen reduzieren"><span></span></button></div>
+          <div class="section-heading"><div><div class="kicker muted" data-i18n="settings.channelKicker">// RELEASE-KANAL</div><h3 data-i18n="settings.channelTitle">Cinderport Updates</h3></div></div>
+          <div class="channel-picker"><button data-channel-choice="stable"><strong data-i18n="channel.stable">Stabil</strong><small data-i18n="channel.stableDescription">Geprüfte öffentliche Releases</small></button><button data-channel-choice="beta"><strong data-i18n="channel.beta">Beta</strong><small data-i18n="channel.betaDescription">Vorabversionen zum Testen</small></button></div>
+          <div class="section-heading"><div><div class="kicker muted" data-i18n="settings.appUpdatesKicker">// JE APP</div><h3 data-i18n="settings.appUpdatesTitle">Automatische Updates</h3></div></div>
+          <div class="app-update-settings" id="app-update-settings"></div>
+          <div class="section-heading"><div><div class="kicker muted" data-i18n="settings.launchArgsKicker">// STARTOPTIONEN</div><h3 data-i18n="settings.launchArgsTitle">Startargumente je App</h3></div></div>
+          <div class="launch-args-list" id="launch-args-list"></div>
+          <div class="settings-transfer"><button class="outline-button" id="export-settings" data-i18n="settings.export">Einstellungen exportieren</button><button class="outline-button" id="import-settings" data-i18n="settings.import">Einstellungen importieren</button><button class="outline-button" id="open-diagnostics" data-i18n="settings.diagnostics">Diagnose öffnen</button></div><p class="settings-feedback" id="settings-feedback"></p>
+        </section>
+
+        <section class="view secondary-view" id="view-diagnostics">
+          <div class="kicker"><span class="kicker-square"></span> <span data-i18n="diagnostics.kicker">FEHLERSUCHE</span></div><h1><span data-i18n="diagnostics.title">Diagnose</span><span class="heading-dot">.</span></h1><p data-i18n="diagnostics.subtitle">Technische Angaben ohne Spielstände oder Zugangsdaten.</p>
+          <button class="refresh-button diagnostics-copy" id="copy-diagnostics" data-i18n="diagnostics.copy">Bericht kopieren</button>
+          <pre class="diagnostics-report" id="diagnostics-report"></pre>
         </section>
 
         <section class="view secondary-view" id="view-about">
@@ -84,6 +126,7 @@
       </main>
     </div>
   </div>
+  <div class="detail-backdrop" id="detail-backdrop" hidden><section class="detail-panel" role="dialog" aria-modal="true" aria-labelledby="detail-title"><button class="detail-close" id="detail-close" data-i18n-aria="detail.close" aria-label="Schließen">×</button><div id="detail-content"></div></section></div>
   <div class="modal-backdrop" id="autostart-modal" hidden>
     <div class="autostart-modal" role="dialog" aria-modal="true" aria-labelledby="autostart-title">
       <div class="modal-top"><span>✦</span> <span data-i18n="prompt.kicker">DEIN PORTAL, IMMER BEREIT</span><span class="modal-version">01 / 01</span></div>

@@ -12,6 +12,12 @@ Ein Windows-Launcher im Pixel-Art-Stil für die wachsende Sammlung von Staatseig
 - Erkennt beim ersten Start die Windows-Sprache: Deutsch wird übernommen, alle anderen Sprachen verwenden Englisch. DE/EN lassen sich im Launcher umschalten.
 - Bietet Autostart als freiwillige Einstellung. Beim ersten Start der installierten Anwendung wird gefragt; der Installer aktiviert Autostart nicht.
 - Verwendet eine eigene Fensterleiste und fest eingebundene Cover. Die Cover für Embercrown und Kollaps stammen von den jeweiligen itch.io-Seiten. Das aktuelle Streamplan-Maker-Bild wurde direkt vom Entwickler bereitgestellt.
+- Prüft die Bibliothek und den Launcher alle 30 Minuten erneut. Ein Download-Center zeigt Warteschlange, Fortschritt, Geschwindigkeit und Restzeit; Downloads können abgebrochen oder erneut gestartet werden.
+- Bietet App-Details mit Bildern, Release Notes und Versionen sowie Suche, Filter, Favoriten, zuletzt gestartete Apps und einen Updateverlauf.
+- Unterstützt drei Pixel-Art-Themes, eine Kompaktansicht und reduzierte Animationen. Ein optionales Tray und Desktop-Benachrichtigungen halten Cinderport im Hintergrund erreichbar.
+- Erlaubt einzelne automatische App-Updates abzuschalten, beim Streamen alle automatischen Installationen und Benachrichtigungen zu pausieren, Startargumente zu speichern und installierte Apps manuell zuzuordnen. Laufende Apps werden vor einem Update geschlossen abgewartet.
+- Prüft vor Downloads freien Speicher, räumt alte Installer auf und kann eine App per Neuinstallation reparieren. Einstellungen lassen sich exportieren und importieren; die Diagnoseansicht liefert einen kopierbaren Fehlerbericht.
+- Bietet Stable- und Beta-Kanal für Cinderport-Updates. Die News-Ansicht bezieht Entwickler-Updates aus den offiziellen GitHub-Releases. Geplante Apps können in `src/upcoming.json` angekündigt werden.
 
 ## Starten und bauen
 
@@ -28,11 +34,13 @@ Der gebrandete Windows-Installer liegt danach unter `dist/Cinderport-Setup-<vers
 
 ## Cinderport veröffentlichen
 
-`electron-builder` erzeugt neben dem NSIS-Installer auch `dist/latest.yml` und eine `.blockmap`. Diese drei Dateien gehören **gemeinsam** in ein öffentliches Release von [`Staatseigentum/Cinderport`](https://github.com/Staatseigentum/Cinderport/releases) mit dem Tag `v<version>`. Der Installer kann zusätzlich auf itch.io angeboten werden. Installierte Cinderport-Kopien lesen ihren Updatekanal direkt aus dem mitgelieferten `app-update.yml` und nutzen den NSIS-Updater. Vor jedem Release die Version in `package.json` erhöhen und neu bauen; `latest.yml` und Installer müssen aus demselben Build stammen. Der aktuelle Installer ist nicht mit einem eigenen Authenticode-Zertifikat signiert.
+`electron-builder` erzeugt neben dem NSIS-Installer auch `dist/latest.yml` und eine `.blockmap`. Diese drei Dateien gehören **gemeinsam** in ein öffentliches Stable-Release von [`Staatseigentum/Cinderport`](https://github.com/Staatseigentum/Cinderport/releases) mit dem Tag `v<version>`. Ein Beta-Release verwendet eine Vorabversion, den GitHub-Prerelease-Status und `beta.yml` aus demselben Build. Der Installer kann zusätzlich auf itch.io angeboten werden. Installierte Cinderport-Kopien lesen ihren Updatekanal direkt aus dem mitgelieferten `app-update.yml` und nutzen den NSIS-Updater. Vor jedem Release die Version in `package.json` erhöhen und neu bauen; Update-Metadaten und Installer müssen aus demselben Build stammen. Der aktuelle Installer ist nicht mit einem eigenen Authenticode-Zertifikat signiert.
 
 ## Neue Apps hinzufügen
 
 Ein neues App-Objekt in [`src/catalog.js`](src/catalog.js) hinzufügen: ID, Name, deutsche/englische Kurzbeschreibung, GitHub-Repository, Release-Asset-Muster, Installer-Typ, ausführbare Datei, Registry-Name und typische Installationsordner. Ein fest eingebautes Cover als `src/assets/<id>-cover.png` ergänzen. Die Bibliothek, Karten, Zähler, Statusansicht, Installationssuche und Updateprüfung verwenden den Katalog automatisch. Bei neuen Installer-Formaten den Ausführungspfad in `src/library.js` ergänzen. Der Release-Asset muss einen von GitHub veröffentlichten SHA-256-Digest besitzen.
+
+Für eine angekündigte App ohne Download kann `src/upcoming.json` einen Eintrag mit `id`, `name` und `description: { "de": "…", "en": "…" }` enthalten. Die neutrale „Demnächst“-Karte wird bis zur ersten konkreten Ankündigung angezeigt.
 
 Für eine Ansicht ohne automatische Installation vorhandener App-Updates kann der gepackte Launcher als Vorschau mit `CINDERPORT_PREVIEW=1` gestartet werden. Im normalen Start ist die Update-Automatik aktiv.
 

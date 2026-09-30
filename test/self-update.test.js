@@ -32,3 +32,16 @@ test('development preview never contacts the release feed', async () => {
   assert.equal((await self.check()).phase, 'unavailable');
   assert.equal(self.restart(), false);
 });
+
+test('switching between stable and beta configures the GitHub updater', () => {
+  const updater = new EventEmitter();
+  const self = new SelfUpdate({ packaged: true, preview: false, version: '0.3.0', notify: () => {}, updater, channel: 'stable' });
+  assert.equal(updater.channel, 'latest');
+  assert.equal(updater.allowPrerelease, false);
+  self.setChannel('beta');
+  assert.equal(updater.channel, 'beta');
+  assert.equal(updater.allowPrerelease, true);
+  self.setChannel('stable');
+  assert.equal(updater.channel, 'latest');
+  assert.equal(updater.allowPrerelease, false);
+});

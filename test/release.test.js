@@ -6,7 +6,7 @@ const path = require('node:path');
 const { createHash } = require('node:crypto');
 const catalog = require('../src/catalog');
 const { latestRelease, isNewer } = require('../src/release');
-const { downloadFile } = require('../src/library');
+const { downloadFile, parseLaunchArgs } = require('../src/library');
 
 test('Kollaps selects the MSI installer and its published digest', async () => {
   const release = await latestRelease(catalog[1], async () => ({
@@ -54,4 +54,36 @@ test('download accepts matching bytes and rejects a mismatched digest', async ()
     global.fetch = originalFetch;
     await fs.rm(file, { force: true });
   }
+});
+
+test('download reports intermediate progress before completion', async () => {
+  const chunks = [Buffer.alloc(5, 1), Buffer.alloc(5, 2)];
+  const bytes = Buffer.concat(chunks);
+  const originalFetch = global.fetch;
+  global.fetch = async () => {
+    const response = new Response(new ReadableStream({
+      start(controller) {
+        for (const chunk of chunks) controller.enqueue(chunk);
+        controller.close();
+      }
+    }), { status: 200, headers: { 'content-length': String(bytes.length) } });
+    Object.defineProperty(response, 'url', { value: 'https://release-assets.githubusercontent.com/asset' });
+    return response;
+  };
+  const file = path.join(os.tmpdir(), `cinderport-${process.pid}-progress-test.exe`);
+  const reports = [];
+  try {
+    await downloadFile({ url: 'https://github.com/test', sha256: createHash('sha256').update(bytes).digest('hex'), size: bytes.length }, file,
+      (percent, received) => reports.push({ percent, received }));
+    assert.deepEqual(reports.map(report => report.percent), [50, 99, 100]);
+    assert.deepEqual(reports.map(report => report.received), [5, 10, 10]);
+  } finally {
+    global.fetch = originalFetch;
+    await fs.rm(file, { force: true });
+  }
+});
+
+test('launch arguments preserve quoted values without invoking a shell', () => {
+  assert.deepEqual(parseLaunchArgs('--windowed --title "Two words"'), ['--windowed', '--title', 'Two words']);
+  assert.throws(() => parseLaunchArgs('--title "unfinished'), { code: 'invalid_arguments' });
 });
