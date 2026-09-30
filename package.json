@@ -1,6 +1,6 @@
 {
   "name": "cinderport",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "A growing home for Staatseigentum games and tools",
   "main": "src/main.js",
   "author": "Staatseigentum",

@@ -16,17 +16,24 @@ class SelfUpdate {
     updater.autoDownload = true;
     updater.autoInstallOnAppQuit = true;
     updater.on('checking-for-update', () => this.set({ phase: 'checking', progress: null }));
-    updater.on('update-available', info => this.set({ phase: 'downloading', latestVersion: info.version, progress: 0 }));
+    updater.on('update-available', info => {
+      if (!isNewerVersion(info?.version, this.state.version)) return;
+      this.set({ phase: 'downloading', latestVersion: info.version, progress: 0 });
+    });
     updater.on('update-not-available', info => this.set({ phase: 'ready', latestVersion: info?.version || this.state.version, progress: null }));
     updater.on('download-progress', info => this.set({ phase: 'downloading', progress: Math.round(info.percent) }));
     updater.on('update-downloaded', info => {
       const filename = path.basename(info?.downloadedFile || '');
       const fileVersion = semver.valid(/^Cinderport-Setup-(.+)\.exe$/i.exec(filename)?.[1] || '');
-      const version = fileVersion || [this.state.latestVersion, info?.version]
-        .filter(value => isNewerVersion(value, this.state.version))
-        .sort(semver.rcompare)[0];
-      if (version) this.set({ phase: 'downloaded', latestVersion: version, progress: 100 });
-      else this.set({ phase: 'ready', latestVersion: this.state.version, progress: null });
+      const version = fileVersion || info?.version;
+      if (!isNewerVersion(version, this.state.version)) {
+        if (this.state.phase !== 'downloading' && this.state.phase !== 'downloaded') {
+          this.set({ phase: 'ready', latestVersion: this.state.version, progress: null });
+        }
+        return;
+      }
+      if (isNewerVersion(this.state.latestVersion, version)) return;
+      this.set({ phase: 'downloaded', latestVersion: version, progress: 100 });
     });
     updater.on('error', error => this.set({ phase: 'error', progress: null, error: String(error.message || error).slice(0, 300) }));
   }

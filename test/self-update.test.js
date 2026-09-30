@@ -58,8 +58,23 @@ test('a stale downloaded event cannot block a newer launcher release', async () 
   await self.check();
   assert.equal(checks, 1);
   updater.emit('update-downloaded', { version: '0.3.0' });
+  assert.equal(self.snapshot().phase, 'downloading');
+  assert.equal(self.snapshot().latestVersion, '0.3.1');
+  assert.equal(self.restart(), false);
+  updater.emit('update-downloaded', { version: '0.3.0', downloadedFile: 'C:\\Temp\\Cinderport-Setup-0.3.1.exe' });
   assert.equal(self.snapshot().phase, 'downloaded');
   assert.equal(self.snapshot().latestVersion, '0.3.1');
+});
+
+test('an old installer cannot mark the next release as downloaded', async () => {
+  const updater = new EventEmitter();
+  updater.checkForUpdates = async () => updater.emit('update-available', { version: '0.3.2' });
+  updater.quitAndInstall = () => {};
+  const self = new SelfUpdate({ packaged: true, preview: false, version: '0.3.1', notify: () => {}, updater });
+  await self.check();
+  updater.emit('update-downloaded', { version: '0.3.1', downloadedFile: 'C:\\Temp\\Cinderport-Setup-0.3.1.exe' });
+  assert.equal(self.snapshot().phase, 'downloading');
+  assert.equal(self.restart(), false);
 });
 
 test('the downloaded installer filename resolves a stale event version', () => {
