@@ -1,0 +1,86 @@
+name: Release Cinderport
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing release tag to build and publish
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: cinderport-release-${{ inputs.tag || github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  windows-release:
+    runs-on: windows-latest
+    steps:
+      - name: Check out release tag
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build Windows installer
+        run: npm run dist:win
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+
+      - name: Verify and publish release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
+        run: |
+          $tag = $env:RELEASE_TAG
+          if ($tag -notmatch '^v(\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?)$') { throw "Invalid release tag: $tag" }
+          $version = $Matches[1]
+          $packageVersion = (Get-Content package.json -Raw | ConvertFrom-Json).version
+          if ($packageVersion -ne $version) { throw "Tag $tag does not match package version $packageVersion" }
+
+          $installer = "dist/Cinderport-Setup-$version.exe"
+          $blockmap = "$installer.blockmap"
+          $metadata = if ($version.Contains('-')) { 'dist/beta.yml' } else { 'dist/latest.yml' }
+          $notes = "media/release-notes-$version.md"
+          foreach ($file in @($installer, $blockmap, $metadata, $notes)) {
+            if (-not (Test-Path -LiteralPath $file -PathType Leaf)) { throw "Missing release file: $file" }
+          }
+          if (-not (Select-String -LiteralPath $metadata -Pattern "^version: $([regex]::Escape($version))$" -Quiet)) {
+            throw "Update metadata does not match $version"
+          }
+
+          $assets = @($installer, $blockmap, $metadata)
+          gh release view $tag --json isDraft --jq .isDraft *> $null
+          if ($LASTEXITCODE -eq 0) {
+            gh release upload $tag @assets --clobber
+            if ($LASTEXITCODE -ne 0) { throw 'Release asset upload failed' }
+            $edit = @('release', 'edit', $tag, '--title', "Cinderport $version", '--notes-file', $notes, '--draft=false')
+            if ($version.Contains('-')) { $edit += @('--prerelease', '--latest=false') }
+            else { $edit += @('--prerelease=false', '--latest') }
+            gh @edit
+          } else {
+            $create = @('release', 'create', $tag) + $assets + @('--title', "Cinderport $version", '--notes-file', $notes, '--verify-tag')
+            if ($version.Contains('-')) { $create += @('--prerelease', '--latest=false') }
+            else { $create += '--latest' }
+            gh @create
+          }
+          if ($LASTEXITCODE -ne 0) { throw 'Release publication failed' }

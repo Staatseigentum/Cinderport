@@ -34,7 +34,7 @@ Der gebrandete Windows-Installer liegt danach unter `dist/Cinderport-Setup-<vers
 
 ## Cinderport veröffentlichen
 
-`electron-builder` erzeugt neben dem NSIS-Installer auch `dist/latest.yml` und eine `.blockmap`. Diese drei Dateien gehören **gemeinsam** in ein öffentliches Stable-Release von [`Staatseigentum/Cinderport`](https://github.com/Staatseigentum/Cinderport/releases) mit dem Tag `v<version>`. Ein Beta-Release verwendet eine Vorabversion, den GitHub-Prerelease-Status und `beta.yml` aus demselben Build. Der Installer kann zusätzlich auf itch.io angeboten werden. Installierte Cinderport-Kopien lesen ihren Updatekanal direkt aus dem mitgelieferten `app-update.yml` und nutzen den NSIS-Updater. Vor jedem Release die Version in `package.json` erhöhen und neu bauen; Update-Metadaten und Installer müssen aus demselben Build stammen. Der aktuelle Installer ist nicht mit einem eigenen Authenticode-Zertifikat signiert.
+Der GitHub-Actions-Workflow [`.github/workflows/release.yml`](.github/workflows/release.yml) baut und testet jeden gepushten `v<version>`-Tag auf Windows und veröffentlicht Installer, Blockmap und `latest.yml` gemeinsam im GitHub-Release. Er kann für einen vorhandenen Tag auch manuell gestartet werden. Die Version im Tag muss zu `package.json` passen; der englische Release-Text liegt unter `media/release-notes-<version>.md`. Für Beta-Versionen mit Suffix verwendet er `beta.yml` und markiert das Release als Vorabversion. Der Installer kann anschließend zusätzlich auf itch.io angeboten werden. Installierte Cinderport-Kopien lesen ihren Updatekanal direkt aus dem mitgelieferten `app-update.yml` und nutzen den NSIS-Updater. Der aktuelle Installer ist nicht mit einem eigenen Authenticode-Zertifikat signiert.
 
 ## Neue Apps hinzufügen
 
