@@ -45,3 +45,28 @@ test('switching between stable and beta configures the GitHub updater', () => {
   assert.equal(updater.channel, 'latest');
   assert.equal(updater.allowPrerelease, false);
 });
+
+test('a stale downloaded event cannot block a newer launcher release', async () => {
+  const updater = new EventEmitter();
+  let checks = 0;
+  updater.checkForUpdates = async () => { checks++; updater.emit('update-available', { version: '0.3.1' }); };
+  updater.quitAndInstall = () => {};
+  const self = new SelfUpdate({ packaged: true, preview: false, version: '0.3.0', notify: () => {}, updater });
+  updater.emit('update-downloaded', { version: '0.3.0' });
+  assert.equal(self.snapshot().phase, 'ready');
+  assert.equal(self.restart(), false);
+  await self.check();
+  assert.equal(checks, 1);
+  updater.emit('update-downloaded', { version: '0.3.0' });
+  assert.equal(self.snapshot().phase, 'downloaded');
+  assert.equal(self.snapshot().latestVersion, '0.3.1');
+});
+
+test('the downloaded installer filename resolves a stale event version', () => {
+  const updater = new EventEmitter();
+  updater.quitAndInstall = () => {};
+  const self = new SelfUpdate({ packaged: true, preview: false, version: '0.2.0', notify: () => {}, updater });
+  updater.emit('update-downloaded', { version: '0.2.0', downloadedFile: 'C:\\Temp\\Cinderport-Setup-0.3.0.exe' });
+  assert.equal(self.snapshot().phase, 'downloaded');
+  assert.equal(self.snapshot().latestVersion, '0.3.0');
+});
