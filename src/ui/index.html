@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src 'none'">
+  <title>Cinderport</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="titlebar" aria-label="Fensterleiste">
+      <div class="titlebar-brand"><span class="tiny-emblem" aria-hidden="true"></span><span>CINDERPORT</span><span class="titlebar-tag">LAUNCHER / 01</span></div>
+      <div class="titlebar-center"><span class="titlebar-led"></span> <span data-i18n="window.ready">DEIN PORTAL IST BEREIT</span></div>
+      <div class="window-controls">
+        <button id="minimize" class="window-button" data-i18n-title="window.minimize" data-i18n-aria="window.minimize" title="Minimieren" aria-label="Minimieren"><span class="min-icon"></span></button>
+        <button id="maximize" class="window-button" data-i18n-title="window.maximize" data-i18n-aria="window.maximize" title="Maximieren" aria-label="Maximieren"><span class="max-icon"></span></button>
+        <button id="close" class="window-button close" data-i18n-title="window.close" data-i18n-aria="window.close" title="Schließen" aria-label="Schließen"><span class="close-icon"></span></button>
+      </div>
+    </header>
+
+    <div class="app-body">
+      <aside class="sidebar">
+        <div class="sidebar-top">
+          <div class="brand-mark" aria-hidden="true"><span class="brand-core"></span></div>
+          <div class="brand-name">CINDER<br><span>PORT</span></div>
+          <p class="brand-caption" data-i18n="brand.caption">DEINE WELTEN. EIN ORT.</p>
+        </div>
+
+        <div class="sidebar-label" data-i18n="nav.label">NAVIGATION</div>
+        <nav class="navigation" aria-label="Hauptnavigation" data-i18n-aria="nav.aria">
+          <button class="nav-item active" data-view="library"><span class="nav-glyph">▦</span><span data-i18n="nav.library">Bibliothek</span><span class="nav-arrow">›</span></button>
+          <button class="nav-item" data-view="activity"><span class="nav-glyph">↓</span><span data-i18n="nav.activity">Aktivität</span><span class="nav-dot" id="activity-dot"></span></button>
+          <button class="nav-item" data-view="settings"><span class="nav-glyph">⚙</span><span data-i18n="nav.settings">Einstellungen</span></button>
+          <button class="nav-item" data-view="about"><span class="nav-glyph">✧</span><span data-i18n="nav.about">Über Cinderport</span></button>
+        </nav>
+
+        <div class="sidebar-spacer"></div>
+        <div class="language-picker"><span data-i18n="language.label">SPRACHE</span><div class="language-buttons"><button data-lang="de" class="active">DE</button><button data-lang="en">EN</button></div></div>
+        <div class="signal-card">
+          <div class="signal-top"><span class="signal-orbit">✦</span><span data-i18n="radar.title">UPDATE-RADAR</span></div>
+          <div class="signal-text" id="radar-text" data-i18n="radar.checking">Versionen werden geprüft …</div>
+          <div class="signal-meter"><span id="signal-fill"></span></div>
+          <span class="signal-foot">GITHUB RELEASES <b>●</b> LIVE</span>
+        </div>
+        <div class="sidebar-footer"><span>© 2026 STAATSEIGENTUM</span><span id="sidebar-version"></span></div>
+      </aside>
+
+      <main class="main-content" id="main-content">
+        <section class="view active" id="view-library">
+          <div class="page-heading">
+            <div><div class="kicker"><span class="kicker-square"></span> <span data-i18n="home.kicker">DEIN HUB FÜR ALLE WELTEN</span></div><h1><span data-i18n="home.title">Willkommen zurück</span><span class="heading-dot">.</span></h1><p data-i18n="home.subtitle">Deine Spiele und Tools, immer bereit für den nächsten Start.</p></div>
+            <button class="refresh-button" id="refresh-button"><span class="refresh-icon">↻</span> <span data-i18n="action.refresh">Updates prüfen</span></button>
+          </div>
+
+          <div class="hero-panel">
+            <div class="hero-grid"></div>
+            <div class="hero-copy"><div class="hero-badge"><span class="badge-star">✦</span> <span data-i18n="hero.badge">DIE SAMMLUNG WÄCHST</span></div><h2><span data-i18n="hero.line1">Neue Welten.</span><br><em data-i18n="hero.line2">Ein Portal.</em></h2><p data-i18n="hero.subtitle">Spiele und Tools an einem Ort. Mehr ist auf dem Weg.</p><div class="hero-bottom"><span class="hero-dash"></span> <span data-i18n="hero.footer">ENTDECKEN. INSTALLIEREN. STARTEN.</span></div></div>
+            <img class="hero-art" src="../assets/portal.svg" alt="Pixel-Art-Portal vor einer dunklen Landschaft" data-i18n-alt="hero.artAlt">
+            <div class="hero-corner">001 / PORTAL</div>
+          </div>
+
+          <div class="section-heading"><div><div class="kicker muted" data-i18n="library.kicker">// DEINE SAMMLUNG</div><h3><span data-i18n="library.title">Alle Apps</span> <span id="app-count">03</span></h3></div><div class="section-status"><span class="status-pulse"></span><span id="section-status" data-i18n="status.checking">Versionen werden geprüft</span></div></div>
+          <div class="cards" id="app-cards"></div>
+          <div class="bottom-note"><span class="note-icon">✦</span><span data-i18n="home.autoNote">Installierte Apps werden beim Öffnen automatisch auf neue Versionen geprüft und aktualisiert.</span><span class="note-right">CINDERPORT // 2026</span></div>
+        </section>
+
+        <section class="view secondary-view" id="view-activity">
+          <div class="kicker"><span class="kicker-square"></span> <span data-i18n="activity.kicker">STATUSZENTRALE</span></div><h1><span data-i18n="nav.activity">Aktivität</span><span class="heading-dot">.</span></h1><p data-i18n="activity.subtitle">Hier siehst du den Stand deiner Apps und Downloads.</p>
+          <div class="activity-panel"><div class="activity-header"><span data-i18n="activity.app">APP</span><span data-i18n="activity.installed">INSTALLIERT</span><span data-i18n="activity.latest">NEUESTE VERSION</span><span data-i18n="activity.status">STATUS</span></div><div id="activity-list"></div></div>
+        </section>
+
+        <section class="view secondary-view" id="view-settings">
+          <div class="kicker"><span class="kicker-square"></span> <span data-i18n="settings.kicker">DEIN STARTPUNKT</span></div><h1><span data-i18n="nav.settings">Einstellungen</span><span class="heading-dot">.</span></h1><p data-i18n="settings.subtitle">Passe an, wie Cinderport auf deinem PC startet.</p>
+          <div class="setting-panel"><div class="setting-icon">↗</div><div class="setting-copy"><h2 data-i18n="settings.autostartTitle">Mit Windows starten</h2><p data-i18n="settings.autostartDescription">Cinderport öffnet sich nach der Anmeldung automatisch und prüft installierte Apps auf Updates.</p><span class="setting-hint" id="autostart-hint"></span></div><button class="toggle" id="autostart-toggle" role="switch" aria-checked="false" data-i18n-aria="settings.toggleAria" aria-label="Autostart umschalten"><span></span></button></div>
+          <div class="setting-panel update-panel"><div class="setting-icon">↻</div><div class="setting-copy"><h2 data-i18n="settings.selfUpdateTitle">Cinderport Updates</h2><p data-i18n="settings.selfUpdateDescription">Neue Launcher-Versionen werden automatisch geladen und beim nächsten Beenden installiert.</p><span class="setting-hint" id="self-update-hint"></span></div><button class="refresh-button" id="self-update-action" hidden></button></div>
+        </section>
+
+        <section class="view secondary-view" id="view-about">
+          <div class="kicker"><span class="kicker-square"></span> <span data-i18n="about.kicker">EIN PORTAL FÜR ALLES</span></div><h1><span data-i18n="nav.about">Über Cinderport</span><span class="heading-dot">.</span></h1>
+          <div class="about-panel"><div class="about-emblem"><span class="brand-core"></span></div><div><div class="kicker muted" id="about-version"></div><h2><span data-i18n="about.line1">DEINE WELTEN.</span><br><span data-i18n="about.line2">DEIN STARTPUNKT.</span></h2><p data-i18n="about.p1">Cinderport bringt Spiele und Tools von Staatseigentum an einen Ort. Die Bibliothek wächst mit neuen Veröffentlichungen. App-Releases kommen direkt aus den offiziellen GitHub-Repositories; Downloads werden anhand ihrer SHA-256-Prüfwerte verifiziert.</p><p data-i18n="about.p2">Installierte Apps und Cinderport selbst werden beim Start geprüft. Updates werden automatisch geladen.</p></div></div>
+          <button class="refresh-button about-refresh" id="about-refresh"><span class="refresh-icon">↻</span> <span data-i18n="action.refreshNow">Jetzt prüfen</span></button>
+        </section>
+      </main>
+    </div>
+  </div>
+  <div class="modal-backdrop" id="autostart-modal" hidden>
+    <div class="autostart-modal" role="dialog" aria-modal="true" aria-labelledby="autostart-title">
+      <div class="modal-top"><span>✦</span> <span data-i18n="prompt.kicker">DEIN PORTAL, IMMER BEREIT</span><span class="modal-version">01 / 01</span></div>
+      <div class="modal-art"><div class="modal-logo"><span class="brand-core"></span></div><div class="modal-stars">✦ &nbsp; ✦ &nbsp; ✦</div></div>
+      <div class="modal-body"><h2 id="autostart-title" data-i18n="prompt.title">Cinderport mit Windows starten?</h2><p data-i18n="prompt.description">Wenn du Autostart aktivierst, öffnet sich Cinderport nach der Anmeldung und hält deine installierten Apps automatisch aktuell. Du kannst das jederzeit in den Einstellungen ändern.</p><div class="modal-actions"><button id="prompt-later" class="modal-later" data-i18n="prompt.later">Später</button><button id="prompt-enable" class="modal-enable"><span>✦</span> <span data-i18n="prompt.enable">Autostart aktivieren</span></button></div></div>
+    </div>
+  </div>
+  <script src="i18n.js"></script>
+  <script src="renderer.js"></script>
+</body>
+</html>

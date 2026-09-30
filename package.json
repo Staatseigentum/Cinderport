@@ -1,0 +1,68 @@
+{
+  "name": "cinderport",
+  "version": "0.2.0",
+  "description": "A growing home for Staatseigentum games and tools",
+  "main": "src/main.js",
+  "author": "Staatseigentum",
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test",
+    "dist:win": "electron-builder --win nsis"
+  },
+  "dependencies": {
+    "electron-updater": "^6.8.9",
+    "semver": "^7.8.5"
+  },
+  "devDependencies": {
+    "electron": "^44.5.1",
+    "electron-builder": "^26.15.3"
+  },
+  "build": {
+    "appId": "io.staatseigentum.cinderport",
+    "productName": "Cinderport",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "src/**/*",
+      "package.json",
+      "README.md"
+    ],
+    "extraResources": [
+      {
+        "from": "vendor/wix",
+        "to": "wix"
+      }
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "src/assets/icon.ico"
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "Staatseigentum",
+        "repo": "Cinderport"
+      }
+    ],
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "runAfterFinish": false,
+      "installerIcon": "src/assets/icon.ico",
+      "installerSidebar": "build/installerSidebar.bmp",
+      "uninstallerSidebar": "build/installerSidebar.bmp",
+      "installerHeader": "build/installerHeader.bmp",
+      "installerLanguages": [
+        "de_DE",
+        "en_US"
+      ],
+      "include": "build/installer.nsh",
+      "artifactName": "Cinderport-Setup-${version}.${ext}"
+    }
+  }
+}
